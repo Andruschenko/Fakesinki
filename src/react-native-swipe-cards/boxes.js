@@ -1,3 +1,6 @@
+const SWIPE_X_THRESHOLD = 120;
+const SWIPE_Y_THRESHOLD = 80;
+
 /**
  * Handle 6 cases:
  * True, Mostly True, Half-True, Mostly False, False, Pants on Fire!

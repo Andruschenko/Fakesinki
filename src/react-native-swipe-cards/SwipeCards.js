@@ -17,9 +17,6 @@ import clamp from 'clamp';
 import NoMoreCards from './NoMoreCards.js';
 import { getTargetBox6 } from './boxes';
 
-const SWIPE_X_THRESHOLD = 120;
-const SWIPE_Y_THRESHOLD = 80;
-
 // Base Styles. Use props to override these values
 const styles = StyleSheet.create({
   container: {
@@ -217,7 +214,10 @@ class SwipeCards extends Component {
     let animatedNoStyles = {transform: [{scale: noScale}], opacity: noOpacity};
 
         return (
-            <View style={this.props.containerStyle}>
+            <View
+              style={this.props.containerStyle}
+              onTouchStart={this.props.onTouch}
+            >
                 { this.state.card
                     ? (
                     <Animated.View style={[this.props.cardStyle, animatedCardstyles]} {...this._panResponder.panHandlers}>
@@ -265,6 +265,7 @@ class SwipeCards extends Component {
 }
 
 SwipeCards.propTypes = {
+  onTouch: React.PropTypes.func,
   cards: React.PropTypes.array,
   renderCards: React.PropTypes.func,
   loop: React.PropTypes.bool,
@@ -274,7 +275,6 @@ SwipeCards.propTypes = {
   handleSwipe: React.PropTypes.func,
   yesView: React.PropTypes.element,
   yesText: React.PropTypes.string,
-
   noView: React.PropTypes.element,
   noText: React.PropTypes.string,
   containerStyle: View.propTypes.style,
@@ -284,7 +284,7 @@ SwipeCards.propTypes = {
   yesTextStyle: Text.propTypes.style,
   noStyle: View.propTypes.style,
   noPositionStyle: View.propTypes.style,
-  noTextStyle: Text.propTypes.style
+  noTextStyle: Text.propTypes.style,
 };
 
 SwipeCards.defaultProps = {
