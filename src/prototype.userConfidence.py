@@ -8,8 +8,9 @@ def normalize(value,zeropoint,onepoint):
 		return None
 	return max(0.0,min(1.0,((value+0.0) - zeropoint)/(onepoint-zeropoint)))
 	
-#									 NT,NT,TA,CS,TT,SE
+#									 NT,99,TA,CS,TT,SE
 def userConfidence(NT,NS,AA,SS,TT,SE):
+	NS=99
 	print "Touches:",NT
 	print "Stops:",NS
 	#print "Angles:",TA
@@ -24,7 +25,7 @@ def userConfidence(NT,NS,AA,SS,TT,SE):
 	
 	if(NT>4):confidence = confidence / 2
 	#confidence now is 0..5
-	return abs(SE - 0.5 + confidence/10)
+	return abs(SE - 0.5 + confidence/8) # because NS is unused!!!!
 	
 	
 	
