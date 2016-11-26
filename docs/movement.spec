@@ -14,6 +14,7 @@ SE = screen edge at end, LEFT(true)=1, RIGHT(false)=0
 
 
 3. Calculate user confidence level
+-> src/prototype.userConfidence.py
 	userConfidence(NT,NS,TA,CS,TT,SE)
 	[0;0.1) - TOTALLY FALSE
 	[0.1;0.3) - FALSE
