@@ -15,3 +15,9 @@ SE = screen edge at end, LEFT(true)=1, RIGHT(false)=0
 
 3. Calculate user confidence level
 	userConfidence(NT,NS,TA,CS,TT,SE)
+	[0;0.1) - TOTALLY FALSE
+	[0.1;0.3) - FALSE
+	[0.3;0.5) - MOSTLY FALSE
+	[0.5;0.7) - HALF TRUE
+	[0.7;0.9) - MOSTLY TRUE
+	[0.9;1] - TRUE
