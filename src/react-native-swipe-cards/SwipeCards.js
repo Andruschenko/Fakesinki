@@ -99,7 +99,7 @@ class SwipeCards extends Component {
     }
   }
 
-  componentWillMount() {
+  _setUpPanResponder = () => {
     this._panResponder = PanResponder.create({
       onMoveShouldSetResponderCapture: () => true,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
@@ -115,38 +115,48 @@ class SwipeCards extends Component {
         null, {dx: this.state.pan.x, dy: this.state.pan.y},
       ]),
 
-      onPanResponderRelease: (e, {vx, vy}) => {
-        this.state.pan.flattenOffset();
-        var velocity;
-
-        if (vx >= 0) {
-          velocity = clamp(vx, 3, 5);
-        } else if (vx < 0) {
-          velocity = clamp(vx * -1, 3, 5) * -1;
-        }
-
-        if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
-
-          this.state.pan.x._value > 0
-            ? this.props.handleYup(this.state.card)
-            : this.props.handleNope(this.state.card)
-
-          this.props.cardRemoved
-            ? this.props.cardRemoved(this.props.cards.indexOf(this.state.card))
-            : null
-
-          Animated.decay(this.state.pan, {
-            velocity: {x: velocity, y: vy},
-            deceleration: 0.98
-          }).start(this._resetState.bind(this))
-        } else {
-          Animated.spring(this.state.pan, {
-            toValue: {x: 0, y: 0},
-            friction: 4
-          }).start()
-        }
-      }
+      onPanResponderRelease: this._handlePanResponderRelease,
     })
+  };
+
+  _handlePanResponderRelease = (e, {vx, vy}) => {
+    this.state.pan.flattenOffset();
+    var velocity;
+
+    if (vx >= 0) {
+      velocity = clamp(vx, 3, 5);
+    } else if (vx < 0) {
+      velocity = clamp(vx * -1, 3, 5) * -1;
+    }
+    
+    if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
+
+      this.state.pan.x._value > 0
+        ? this.props.handleYup(this.state.card)
+        : this.props.handleNope(this.state.card);
+
+      this.props.cardRemoved
+        ? this.props.cardRemoved(this.props.cards.indexOf(this.state.card))
+        : null
+
+      Animated.decay(this.state.pan, {
+        velocity: {x: velocity, y: vy},
+        deceleration: 0.98
+      }).start(this._resetState.bind(this))
+    } else {
+      this._returnToCenter();
+    }
+  };
+
+  _returnToCenter = () => {
+    Animated.spring(this.state.pan, {
+      toValue: {x: 0, y: 0},
+      friction: 4
+    }).start()
+  };
+
+  componentWillMount() {
+    this._setUpPanResponder();
   }
 
   _resetState() {
