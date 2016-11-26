@@ -8,7 +8,7 @@ FALSE = 0
 NT = number of touches (1..)
 NS = number of stops (two+ consecutive moments when finger not moving), not counting the first press (0..)
 TA = total sum of all angles (turns) (0..)
-CS = change of speed (max speed - min speed) (screens per milisecond) (0..)
+CS = change of speed (max speed - min speed) (screens per second) (0..)
 TT = total time since displaying content to the user (seconds)
 SE = screen edge at end, LEFT(true)=1, RIGHT(false)=0 
 
