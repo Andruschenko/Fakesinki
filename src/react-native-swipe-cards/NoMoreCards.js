@@ -1,19 +1,16 @@
-'use strict';
-
 import React, {Component} from 'react';
 
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image
+  StyleSheet,
+  Text,
+  View,
+  Image
 } from 'react-native';
 
-class NoMoreCards extends Component {
+export default class NoMoreCards extends Component {
   constructor(props) {
     super(props);
   }
-
   render() {
     return (
       <View>
@@ -22,13 +19,8 @@ class NoMoreCards extends Component {
     )
   }
 }
-
-export default {
-  NoMoreCards: NoMoreCards
-}
-
 const styles = StyleSheet.create({
   noMoreCardsText: {
     fontSize: 22,
   }
-})
+});

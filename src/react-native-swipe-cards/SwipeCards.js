@@ -14,7 +14,8 @@ import {
 
 import clamp from 'clamp';
 
-import Defaults from './Defaults.js';
+import NoMoreCards from './NoMoreCards.js';
+import { getTargetBox6 } from './boxes';
 
 const SWIPE_X_THRESHOLD = 120;
 const SWIPE_Y_THRESHOLD = 80;
@@ -136,18 +137,7 @@ class SwipeCards extends Component {
       velocity = clamp(vx * -1, 3, 5) * -1;
     }
 
-    // Handle 6 cases:
-    // True, Mostly True, Half-True, Mostly False, False, Pants on Fire!
-    const boxes = [
-      { id: 0, text: 'True', value: x._value < -SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
-      { id: 1, text: 'Mostly True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD },
-      { id: 2, text: 'Half-True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD },
-      { id: 3, text: 'Mostly False', value: x._value > SWIPE_X_THRESHOLD && y._value < -SWIPE_Y_THRESHOLD },
-      { id: 4, text: 'False', value: x._value > SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD},
-      { id: 5, text: 'Pants on Fire!', value: x._value > SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
-    ];
-    const targetBox = boxes.find(box => box.value === true);
-
+    const targetBox = getTargetBox6(x, y);
     //
     if (targetBox) {
       handleSwipe(card, targetBox);
@@ -188,7 +178,7 @@ class SwipeCards extends Component {
       return this.props.renderNoMoreCards();
 
     return (
-      <Defaults.NoMoreCards />
+      <NoMoreCards />
     )
   }
 
@@ -204,18 +194,6 @@ class SwipeCards extends Component {
       yesStyle,
       yesPositionStyle,
     } = this.props;
-
-    // Handle 6 cases:
-    // True, Mostly True, Half-True, Mostly False, False, Pants on Fire!
-    const boxes = [
-      { id: 0, text: 'True', value: x._value < -SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
-      { id: 1, text: 'Mostly True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD },
-      { id: 2, text: 'Half-True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD },
-      { id: 3, text: 'Mostly False', value: x._value > SWIPE_X_THRESHOLD && y._value < -SWIPE_Y_THRESHOLD },
-      { id: 4, text: 'False', value: x._value > SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD},
-      { id: 5, text: 'Pants on Fire!', value: x._value > SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
-    ];
-    const targetBox = boxes.find(box => box.value === true);
 
     // TODO: Change location of renderPosition and text depending on drag.
 
@@ -237,13 +215,6 @@ class SwipeCards extends Component {
     let noOpacity = x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
     let noScale = x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
     let animatedNoStyles = {transform: [{scale: noScale}], opacity: noOpacity};
-
-    // styling of yes and no boxes
-    // var btnClass = classNames({
-    //   'btn': true,
-    //   'btn-pressed': this.state.isPressed,
-    //   'btn-over': !this.state.isPressed && this.state.isHovered
-    // });
 
         return (
             <View style={this.props.containerStyle}>
