@@ -28,7 +28,7 @@ print "UC:",test
 print "User thinks that this is",
 if test<0.1: print "TOTALLY FALSE"
 elif test<0.3: print "FALSE"
-elif test<0.5: print "FALSE"
+elif test<0.5: print "MOSTLY FALSE"
 elif test<0.7: print "HALF TRUE"
 elif test<0.9: print "MOSTLY TRUE"
 else: print "TRUE"
