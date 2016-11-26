@@ -1,54 +1,59 @@
 /* Gratefully copied from https://github.com/brentvatne/react-native-animated-demo-tinder */
 'use strict';
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import {
-    StyleSheet,
-    Text,
-    View,
-    Animated,
-    PanResponder,
-    Image
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  PanResponder,
+  Image,
 } from 'react-native';
 
 import clamp from 'clamp';
 
 import Defaults from './Defaults.js';
 
-var SWIPE_THRESHOLD = 120;
+const SWIPE_X_THRESHOLD = 120;
+const SWIPE_Y_THRESHOLD = 80;
 
 // Base Styles. Use props to override these values
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#F5FCFF'
   },
-  true: {
+  yes: {
       borderColor: 'green',
       borderWidth: 2,
       position: 'absolute',
       padding: 20,
-      bottom: 20,
       borderRadius: 5,
+  },
+  yesPosition: {
+      bottom: 20,
       right: 20,
   },
-  trueText: {
+  yesText: {
       fontSize: 16,
       color: 'green',
   },
-  nope: {
+  no: {
       borderColor: 'red',
       borderWidth: 2,
       position: 'absolute',
-      bottom: 20,
       padding: 20,
       borderRadius: 5,
-      left: 20,
   },
-  nopeText: {
+  noPosition: {
+    bottom: 20,
+    left: 20,
+  },
+  noText: {
       fontSize: 16,
       color: 'red',
   }
@@ -70,13 +75,13 @@ class SwipeCards extends Component {
     let newIdx = currentCardIdx + 1;
 
     // Checks to see if last card.
-    // If props.loop=true, will start again from the first card.
+    // If props.loop=yes, will start again from the first card.
     let card = newIdx > this.props.cards.length - 1
       ? this.props.loop ? this.props.cards[0] : null
       : this.props.cards[newIdx];
 
     this.setState({
-      card: card
+      card,
     });
   }
 
@@ -101,7 +106,7 @@ class SwipeCards extends Component {
 
   _setUpPanResponder = () => {
     this._panResponder = PanResponder.create({
-      onMoveShouldSetResponderCapture: () => true,
+      onMoveShouldSetResponderCapture: () => yes,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
         return gestureState.dx != 0 && gestureState.dy != 0;
       },
@@ -120,24 +125,36 @@ class SwipeCards extends Component {
   };
 
   _handlePanResponderRelease = (e, {vx, vy}) => {
+    const { pan : { x, y }, card } = this.state;
+    const { handleSwipe } = this.props;
     this.state.pan.flattenOffset();
-    var velocity;
 
+    var velocity;
     if (vx >= 0) {
       velocity = clamp(vx, 3, 5);
     } else if (vx < 0) {
       velocity = clamp(vx * -1, 3, 5) * -1;
     }
-    
-    if (Math.abs(this.state.pan.x._value) > SWIPE_THRESHOLD) {
 
-      this.state.pan.x._value > 0
-        ? this.props.handleYup(this.state.card)
-        : this.props.handleNope(this.state.card);
+    // Handle 6 cases:
+    // True, Mostly True, Half-True, Mostly False, False, Pants on Fire!
+    const boxes = [
+      { id: 0, text: 'True', value: x._value < -SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
+      { id: 1, text: 'Mostly True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD },
+      { id: 2, text: 'Half-True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD },
+      { id: 3, text: 'Mostly False', value: x._value > SWIPE_X_THRESHOLD && y._value < -SWIPE_Y_THRESHOLD },
+      { id: 4, text: 'False', value: x._value > SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD},
+      { id: 5, text: 'Pants on Fire!', value: x._value > SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
+    ];
+    const targetBox = boxes.find(box => box.value === true);
+
+    //
+    if (targetBox) {
+      handleSwipe(card, targetBox);
 
       this.props.cardRemoved
         ? this.props.cardRemoved(this.props.cards.indexOf(this.state.card))
-        : null
+        : null;
 
       Animated.decay(this.state.pan, {
         velocity: {x: velocity, y: vy},
@@ -180,23 +197,53 @@ class SwipeCards extends Component {
   }
 
   render() {
-    let { pan, enter, } = this.state;
+    let { pan: { x, y }, enter, } = this.state;
+    const {
+      noStyle,
+      noPositionStyle,
+      yesStyle,
+      yesPositionStyle,
+    } = this.props;
 
-    let [translateX, translateY] = [pan.x, pan.y];
+    // Handle 6 cases:
+    // True, Mostly True, Half-True, Mostly False, False, Pants on Fire!
+    const boxes = [
+      { id: 0, text: 'True', value: x._value < -SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
+      { id: 1, text: 'Mostly True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD },
+      { id: 2, text: 'Half-True', value: x._value < -SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD },
+      { id: 3, text: 'Mostly False', value: x._value > SWIPE_X_THRESHOLD && y._value < -SWIPE_Y_THRESHOLD },
+      { id: 4, text: 'False', value: x._value > SWIPE_X_THRESHOLD && y._value > -SWIPE_Y_THRESHOLD && y._value < SWIPE_Y_THRESHOLD},
+      { id: 5, text: 'Pants on Fire!', value: x._value > SWIPE_X_THRESHOLD && y._value > SWIPE_Y_THRESHOLD },
+    ];
+    const targetBox = boxes.find(box => box.value === true);
 
-    let rotate = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
-    let opacity = pan.x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]});
-    let scale = enter;
+    // TODO: Change location of renderPosition and text depending on drag.
+
+    let [translateX, translateY] = [x, y];
+
+    let rotate = x.interpolate({inputRange: [-200, 0, 200], outputRange: ["-30deg", "0deg", "30deg"]});
+    let scale = x.interpolate({inputRange: [-200, 0, 200], outputRange: [1, 0.75, 0.5]});
+    let opacity = x.interpolate({inputRange: [-200, 0, 200], outputRange: [0.5, 1, 0.5]});
+    // let scale = enter;
 
     let animatedCardstyles = {transform: [{translateX}, {translateY}, {rotate}, {scale}], opacity};
 
-    let trueOpacity = pan.x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
-    let trueScale = pan.x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
-    let animatedYupStyles = {transform: [{scale: trueScale}], opacity: trueOpacity}
+    // animations for all right-hand swipes
+    let yesOpacity = x.interpolate({inputRange: [0, 150], outputRange: [0, 1]});
+    let yesScale = x.interpolate({inputRange: [0, 150], outputRange: [0.5, 1], extrapolate: 'clamp'});
+    let animatedYesStyles = {transform: [{scale: yesScale}], opacity: yesOpacity};
 
-    let nopeOpacity = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
-    let nopeScale = pan.x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
-    let animatedNopeStyles = {transform: [{scale: nopeScale}], opacity: nopeOpacity}
+    // animations for all left-hand swipes
+    let noOpacity = x.interpolate({inputRange: [-150, 0], outputRange: [1, 0]});
+    let noScale = x.interpolate({inputRange: [-150, 0], outputRange: [1, 0.5], extrapolate: 'clamp'});
+    let animatedNoStyles = {transform: [{scale: noScale}], opacity: noOpacity};
+
+    // styling of yes and no boxes
+    // var btnClass = classNames({
+    //   'btn': true,
+    //   'btn-pressed': this.state.isPressed,
+    //   'btn-over': !this.state.isPressed && this.state.isHovered
+    // });
 
         return (
             <View style={this.props.containerStyle}>
@@ -209,15 +256,15 @@ class SwipeCards extends Component {
                     : this.renderNoMoreCards() }
 
 
-                { this.props.renderNope
-                  ? this.props.renderNope(pan)
+                { this.props.renderNo
+                  ? this.props.renderNo(pan)
                   : (
-                      this.props.showNope
+                      this.props.showNo
                       ? (
-                        <Animated.View style={[this.props.nopeStyle, animatedNopeStyles]}>
+                        <Animated.View style={[noStyle, noPositionStyle, animatedNoStyles]}>
                             {this.props.noView
                                 ? this.props.noView
-                                : <Text style={this.props.nopeTextStyle}>{this.props.noText ? this.props.noText : "Nope!"}</Text>
+                                : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "No!"}</Text>
                             }
                         </Animated.View>
                         )
@@ -225,15 +272,15 @@ class SwipeCards extends Component {
                     )
                 }
 
-                { this.props.renderYup
-                  ? this.props.renderYup(pan)
+                { this.props.renderYes
+                  ? this.props.renderYes(pan)
                   : (
-                      this.props.showYup
+                      this.props.showYes
                       ? (
-                        <Animated.View style={[this.props.trueStyle, animatedYupStyles]}>
-                            {this.props.trueView
-                                ? this.props.trueView
-                                : <Text style={this.props.trueTextStyle}>{this.props.trueText? this.props.trueText : "Yup!"}</Text>
+                        <Animated.View style={[yesStyle, yesPositionStyle, animatedYesStyles]}>
+                            {this.props.yesView
+                                ? this.props.yesView
+                                : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "Yes!"}</Text>
                             }
                         </Animated.View>
                       )
@@ -251,32 +298,35 @@ SwipeCards.propTypes = {
   renderCards: React.PropTypes.func,
   loop: React.PropTypes.bool,
   renderNoMoreCards: React.PropTypes.func,
-  showYup: React.PropTypes.bool,
-  showNope: React.PropTypes.bool,
-  handleYup: React.PropTypes.func,
-  handleNope: React.PropTypes.func,
-  trueView: React.PropTypes.element,
-  trueText: React.PropTypes.string,
+  showYes: React.PropTypes.bool,
+  showNo: React.PropTypes.bool,
+  handleSwipe: React.PropTypes.func,
+  yesView: React.PropTypes.element,
+  yesText: React.PropTypes.string,
 
   noView: React.PropTypes.element,
   noText: React.PropTypes.string,
   containerStyle: View.propTypes.style,
   cardStyle: View.propTypes.style,
-  trueStyle: View.propTypes.style,
-  trueTextStyle: Text.propTypes.style,
-  nopeStyle: View.propTypes.style,
-  nopeTextStyle: Text.propTypes.style
+  yesStyle: View.propTypes.style,
+  yesPositionStyle: View.propTypes.style,
+  yesTextStyle: Text.propTypes.style,
+  noStyle: View.propTypes.style,
+  noPositionStyle: View.propTypes.style,
+  noTextStyle: Text.propTypes.style
 };
 
 SwipeCards.defaultProps = {
-    loop: false,
-    showYup: true,
-    showNope: true,
-    containerStyle: styles.container,
-    trueStyle: styles.true,
-    trueTextStyle: styles.trueText,
-    nopeStyle: styles.nope,
-    nopeTextStyle: styles.nopeText
+  loop: false,
+  showYes: true,
+  showNo: true,
+  containerStyle: styles.container,
+  yesStyle: styles.yes,
+  yesPositionStyle: styles.yesPosition,
+  yesTextStyle: styles.yesText,
+  noStyle: styles.no,
+  noPositionStyle: styles.noPosition,
+  noTextStyle: styles.noText,
 };
 
 export default SwipeCards

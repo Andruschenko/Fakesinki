@@ -55,11 +55,8 @@ export default React.createClass({
       outOfCards: false
     }
   },
-  handleYup (card) {
-    console.log("yup")
-  },
-  handleNope (card) {
-    console.log("nope")
+  handleSwipe(card, box) {
+    console.log(`swipped card into box ${box.text}`);
   },
   cardRemoved (index) {
     console.log(`The index is ${index}`);
@@ -89,11 +86,10 @@ export default React.createClass({
 
         renderCard={(cardData) => <Card {...cardData} />}
         renderNoMoreCards={() => <NoMoreCards />}
-        showYup={true}
-        showNope={true}
+        showYes={true}
+        showNo={true}
 
-        handleYup={this.handleYup}
-        handleNope={this.handleNope}
+        handleSwipe={this.handleSwipe}
         cardRemoved={this.cardRemoved}
       />
     )
