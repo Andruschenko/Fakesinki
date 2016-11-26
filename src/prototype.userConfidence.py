@@ -8,22 +8,27 @@ def normalize(value,zeropoint,onepoint):
 		return None
 	return max(0.0,min(1.0,((value+0.0) - zeropoint)/(onepoint-zeropoint)))
 	
-def userConfidence(NT,NS,TA,CS,TT,SE):
+#									 NT,NT,TA,CS,TT,SE
+def userConfidence(NT,NS,AA,SS,TT,SE):
 	print "Touches:",NT
 	print "Stops:",NS
-	print "Angles:",TA
-	print "Speedv:",CS
+	#print "Angles:",TA
+	#print "Speedv:",CS
+	print "Angle:",AA
+	print "Speed:",SS
 	print "Time:",TT
 	print "Edge:", SE
 	
-	confidence=normalize(NT,4,1)+normalize(NS,5,0)+normalize(TA,0.3,0.05)+normalize(CS,3.0,0)+normalize(TT,15,1)
-	if(TA>0.5):confidence = confidence / 2
+	confidence=normalize(NT,4,1)+normalize(NS,5,0)+normalize(abs(AA),90,5)+normalize(SS,10.0,0)+normalize(TT,15,1)
+	#SS normalization needs calibrating!!! how fast does a user swipe? 
+	
+	if(NT>4):confidence = confidence / 2
 	#confidence now is 0..5
 	return abs(SE - 0.5 + confidence/10)
 	
 	
 	
-test=userConfidence(1, 0, 0.3, 100, 5.3, 1)
+test=userConfidence(1, 0, 12, 11, 5.3, 1)
 print "UC:",test
 print "User thinks that this is",
 if test<0.1: print "TOTALLY FALSE"

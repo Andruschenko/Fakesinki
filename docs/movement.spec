@@ -11,7 +11,8 @@ TA = total sum of all angles (turns) (0..)
 CS = change of speed (max speed - min speed) (screens per second) (0..)
 TT = total time since displaying content to the user (seconds)
 SE = screen edge at end, LEFT(true)=1, RIGHT(false)=0 
-
+SS = average speed (screens per second) (0..)
+AA = movement angle abs(atan(y/x)) (degrees) (0..90); x=0 -> AA:=90; y=0 -> AA:=0
 
 3. Calculate user confidence level
 -> src/prototype.userConfidence.py
