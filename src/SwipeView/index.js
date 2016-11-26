@@ -33,6 +33,7 @@ export default class SwipeView extends Component {
       touchesScreenNr: 0,
       touchesCardNr: 0,
       swipes: [],
+      time: new Date().getTime(),
     }
   }
 
@@ -46,17 +47,21 @@ export default class SwipeView extends Component {
   };
 
   _handleSwipeSuccess = (card, box) => {
+    const { swipes, time } = this.state;
     // console.log(`swipped card into box ${box.text}`);
 
-    this.state.swipes.map((swipe, key) => {
+    swipes.map((swipe, key) => {
       console.log('swipe' + key);
     });
+
+    console.log('time passed', (new Date().getTime() - time) / 1000);
 
     // reset touches and swipes
     this.setState({
       touchesScreenNr: 0,
       touchesCardNr: 0,
       swipes: [],
+      time: new Date().getTime(),
     });
   };
 
@@ -87,7 +92,7 @@ export default class SwipeView extends Component {
       console.log(`There are only ${this.state.cards.length - index - 1} cards left.`);
 
       if (!this.state.outOfCards) {
-        console.log(`Adding ${Cards2.length} more cards`)
+        console.log(`Adding ${Cards2.length} more cards`);
 
         this.setState({
           cards: this.state.cards.concat(Cards2),
