@@ -5,17 +5,23 @@ import {
   StyleSheet,
 } from 'react-native';
 
-const Card = (props) => (
-  <View
-    style={styles.card}
-    onTouchStart={() => console.log('touched card')}
-  >
-    {/*<Image style={styles.thumbnail} source={{uri: this.props.image}} />*/}
-    <Text style={styles.text}>
-      Card {props.name}: This is a serious article about some obvious truth.
-    </Text>
-  </View>
-);
+const Card = (props) => {
+  _handleTouch = (event) => (
+    props.onTouch(event, 'card')
+  );
+
+  return (
+    <View
+      style={styles.card}
+      onTouchStart={_handleTouch}
+    >
+      {/*<Image style={styles.thumbnail} source={{uri: this.props.image}} />*/}
+      <Text style={styles.text}>
+        Card {props.name}: This is a serious article about some obvious truth.
+      </Text>
+    </View>
+  )
+};
 
 const styles = StyleSheet.create({
   card: {

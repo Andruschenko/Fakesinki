@@ -122,9 +122,9 @@ class SwipeCards extends Component {
     })
   };
 
-  _handlePanResponderRelease = (e, {vx, vy}) => {
+  _handlePanResponderRelease = (e, { vx, vy, dx, dy }) => {
     const { pan : { x, y }, card } = this.state;
-    const { handleSwipe } = this.props;
+    const { onSwipeSuccess, onSwipe } = this.props;
     this.state.pan.flattenOffset();
 
     var velocity;
@@ -134,10 +134,12 @@ class SwipeCards extends Component {
       velocity = clamp(vx * -1, 3, 5) * -1;
     }
 
+    onSwipe({ vx, vy, dx, dy });
+
     const targetBox = getTargetBox6(x, y);
     //
     if (targetBox) {
-      handleSwipe(card, targetBox);
+      onSwipeSuccess(card, targetBox);
 
       this.props.cardRemoved
         ? this.props.cardRemoved(this.props.cards.indexOf(this.state.card))
@@ -266,13 +268,14 @@ class SwipeCards extends Component {
 
 SwipeCards.propTypes = {
   onTouch: React.PropTypes.func,
+  onSwipeSuccess: React.PropTypes.func,
+  onSwipe: React.PropTypes.func,
   cards: React.PropTypes.array,
   renderCards: React.PropTypes.func,
   loop: React.PropTypes.bool,
   renderNoMoreCards: React.PropTypes.func,
   showYes: React.PropTypes.bool,
   showNo: React.PropTypes.bool,
-  handleSwipe: React.PropTypes.func,
   yesView: React.PropTypes.element,
   yesText: React.PropTypes.string,
   noView: React.PropTypes.element,

@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+  Image
+} from 'react-native';
 
 import SwipeCards from '../react-native-swipe-cards/SwipeCards';
 
@@ -16,21 +22,60 @@ let NoMoreCards = React.createClass({
   }
 });
 
+const { screenHeight, screenWidth } = Dimensions.get('window');
+
 export default class SwipeView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cards: Cards,
-      outOfCards: false
+      outOfCards: false,
+      touchesScreenNr: 0,
+      touchesCardNr: 0,
+      swipes: [],
     }
   }
 
-  _handleSwipe = (card, box) => {
-    console.log(`swipped card into box ${box.text}`);
+  _handleSwipe = ({ vx, vy, dx, dy }) => {
+    console.log('vx', vx, 'vy', vy);
+    console.log('dx', dx, 'dy', dy);
+
+    this.setState({
+      swipes: this.state.swipes.concat([{ vx, vy, dx, dy }])
+    });
   };
 
-  _handleTouch = () => {
-    console.log('touched outer container');
+  _handleSwipeSuccess = (card, box) => {
+    // console.log(`swipped card into box ${box.text}`);
+
+    this.state.swipes.map((swipe, key) => {
+      console.log('swipe' + key);
+    });
+
+    // reset touches and swipes
+    this.setState({
+      touchesScreenNr: 0,
+      touchesCardNr: 0,
+      swipes: [],
+    });
+  };
+
+  _handleTouch = (event, component) => {
+    // console.log(`touched ${component}`);
+    const {
+      touchesScreenNr,
+      touchesCardNr,
+    } = this.state;
+    switch (component) {
+      case 'card':
+        this.setState({ touchesCardNr: touchesCardNr + 1 });
+        break;
+      case 'screen':
+        this.setState({ touchesScreenNr: touchesScreenNr + 1 });
+        break;
+      default:
+        break;
+    }
   };
 
   _cardRemoved = (index) => {
@@ -61,12 +106,13 @@ export default class SwipeView extends Component {
 
         onTouch={this._handleTouch}
 
-        renderCard={(cardData) => <Card {...cardData} />}
+        renderCard={(cardData) => <Card {...cardData} onTouch={this._handleTouch} />}
         renderNoMoreCards={() => <NoMoreCards />}
         showYes={true}
         showNo={true}
 
-        handleSwipe={this._handleSwipe}
+        onSwipeSuccess={this._handleSwipeSuccess}
+        onSwipe={this._handleSwipe}
         cardRemoved={this._cardRemoved}
       />
     )
