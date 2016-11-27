@@ -19,3 +19,11 @@ export const getTargetBox6 = (x, y) => {
   ];
   return boxes.find(box => box.value === true);
 };
+
+export const getTargetBox2 = (x, y) => {
+  const boxes = [
+    { id: 1, text: 'True', value: x._value > SWIPE_X_THRESHOLD },
+    { id: 0, text: 'False', value: x._value < -SWIPE_X_THRESHOLD },
+  ];
+  return boxes.find(box => box.value === true);
+};

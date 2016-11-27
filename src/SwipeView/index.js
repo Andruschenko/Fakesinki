@@ -6,29 +6,24 @@ import {
   View,
   Image
 } from 'react-native';
+import _ from 'lodash';
 
 import SwipeCards from '../react-native-swipe-cards/SwipeCards';
 
+import { userConfidence } from '../util/userConfidence';
+
 import Card from './components/Card';
+import NoMoreCards from './components/NoMoreCards';
 import { Cards, Cards2 } from './data';
+import { statements as data } from '../../data/test_statements';
 
-let NoMoreCards = React.createClass({
-  render() {
-    return (
-      <View style={styles.noMoreCards}>
-        <Text>No more cards</Text>
-      </View>
-    )
-  }
-});
-
-const { screenHeight, screenWidth } = Dimensions.get('window');
+const CARD_REFRESH_LIMIT = 3;
 
 export default class SwipeView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cards: Cards,
+      cards: data,
       outOfCards: false,
       touchesScreenNr: 0,
       touchesCardNr: 0,
@@ -47,14 +42,23 @@ export default class SwipeView extends Component {
   };
 
   _handleSwipeSuccess = (card, box) => {
-    const { swipes, time } = this.state;
-    // console.log(`swipped card into box ${box.text}`);
+    const {
+      swipes,
+      touchesScreenNr,
+      touchesCardNr,
+      time
+    } = this.state;
 
-    swipes.map((swipe, key) => {
-      console.log('swipe' + key);
+    console.log('box', box.text);
+
+    userConfidence({
+      touchesScreenNr,
+      touchesCardNr,
+      swipesNr: swipes.length,
+      time: new Date().getTime() - time,
+      lastSwipe: _.last(swipes),
+      box,
     });
-
-    console.log('time passed', (new Date().getTime() - time) / 1000);
 
     // reset touches and swipes
     this.setState({
@@ -84,18 +88,17 @@ export default class SwipeView extends Component {
   };
 
   _cardRemoved = (index) => {
+    const { cards, outOfCards } = this.state;
     console.log(`The index is ${index}`);
 
-    let CARD_REFRESH_LIMIT = 3;
+    if (cards.length - index <= CARD_REFRESH_LIMIT + 1) {
+      console.log(`There are only ${cards.length - index - 1} cards left.`);
 
-    if (this.state.cards.length - index <= CARD_REFRESH_LIMIT + 1) {
-      console.log(`There are only ${this.state.cards.length - index - 1} cards left.`);
-
-      if (!this.state.outOfCards) {
-        console.log(`Adding ${Cards2.length} more cards`);
+      if (!outOfCards) {
+        console.log(`Adding ${data.length} more cards`);
 
         this.setState({
-          cards: this.state.cards.concat(Cards2),
+          cards: cards.concat(data),
           outOfCards: true
         })
       }
@@ -130,9 +133,4 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
   },
-  noMoreCards: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
 });

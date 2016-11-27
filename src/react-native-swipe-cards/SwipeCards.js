@@ -15,7 +15,7 @@ import {
 import clamp from 'clamp';
 
 import NoMoreCards from './NoMoreCards.js';
-import { getTargetBox6 } from './boxes';
+import { getTargetBox2 } from './boxes';
 
 // Base Styles. Use props to override these values
 const styles = StyleSheet.create({
@@ -69,17 +69,18 @@ class SwipeCards extends Component {
   }
 
   _goToNextCard() {
-    let currentCardIdx = this.props.cards.indexOf(this.state.card);
+    const { loop, card } = this.state;
+    const { cards } = this.props;
+
+    let currentCardIdx = cards.indexOf(card);
     let newIdx = currentCardIdx + 1;
 
     // Checks to see if last card.
     // If props.loop=yes, will start again from the first card.
-    let card = newIdx > this.props.cards.length - 1
-      ? this.props.loop ? this.props.cards[0] : null
-      : this.props.cards[newIdx];
+    const newCard = newIdx > cards.length - 1 ? (loop ? cards[0] : null) : cards[newIdx];
 
     this.setState({
-      card,
+      card: newCard,
     });
   }
 
@@ -136,7 +137,7 @@ class SwipeCards extends Component {
 
     onSwipe({ vx, vy, dx, dy });
 
-    const targetBox = getTargetBox6(x, y);
+    const targetBox = getTargetBox2(x, y);
     //
     if (targetBox) {
       onSwipeSuccess(card, targetBox);

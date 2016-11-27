@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 
 const Card = (props) => {
+
   _handleTouch = (event) => (
     props.onTouch(event, 'card')
   );
@@ -17,7 +18,7 @@ const Card = (props) => {
     >
       {/*<Image style={styles.thumbnail} source={{uri: this.props.image}} />*/}
       <Text style={styles.text}>
-        Card {props.name}: This is a serious article about some obvious truth.
+        Card ruling_text: {props.ruling_text}
       </Text>
     </View>
   )
