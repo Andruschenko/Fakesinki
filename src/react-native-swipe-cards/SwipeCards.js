@@ -141,7 +141,7 @@ class SwipeCards extends Component {
     const targetBox = getTargetBox2(x, y);
     //
     if (targetBox) {
-      onSwipeSuccess(card, targetBox);
+      onSwipeSuccess(card, targetBox, { vx, vy, dx, dy });
 
       this.props.cardRemoved
         ? this.props.cardRemoved(this.props.cards.indexOf(this.state.card))
@@ -170,6 +170,10 @@ class SwipeCards extends Component {
   _resetState() {
     this.state.pan.setValue({x: 0, y: 0});
     this.state.enter.setValue(0);
+    //
+    // show confidence card
+    console.log('your confidence: ', this.props.confidence);
+    // set timeout to 2 sec
     this._goToNextCard();
     this._animateEntrance();
   }
@@ -222,46 +226,49 @@ class SwipeCards extends Component {
               style={this.props.containerStyle}
               onTouchStart={this.props.onTouch}
             >
-                { this.state.card
+              { this.state.card
+                  ? (
+                  <Animated.View style={[this.props.cardStyle, animatedCardstyles]} {...this._panResponder.panHandlers}>
+                      {this.renderCard(this.state.card)}
+                  </Animated.View>
+              )
+                  : this.renderNoMoreCards() }
+
+
+              { this.props.renderNo
+                ? this.props.renderNo(pan)
+                : (
+                    this.props.showNo
                     ? (
-                    <Animated.View style={[this.props.cardStyle, animatedCardstyles]} {...this._panResponder.panHandlers}>
-                        {this.renderCard(this.state.card)}
-                    </Animated.View>
-                )
-                    : this.renderNoMoreCards() }
-
-
-                { this.props.renderNo
-                  ? this.props.renderNo(pan)
-                  : (
-                      this.props.showNo
-                      ? (
-                        <Animated.View style={[noStyle, noPositionStyle, animatedNoStyles]}>
-                            {this.props.noView
-                                ? this.props.noView
-                                : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "No!"}</Text>
-                            }
-                        </Animated.View>
-                        )
-                      : null
-                    )
-                }
-
-                { this.props.renderYes
-                  ? this.props.renderYes(pan)
-                  : (
-                      this.props.showYes
-                      ? (
-                        <Animated.View style={[yesStyle, yesPositionStyle, animatedYesStyles]}>
-                            {this.props.yesView
-                                ? this.props.yesView
-                                : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "Yes!"}</Text>
-                            }
-                        </Animated.View>
+                      <Animated.View style={[noStyle, noPositionStyle, animatedNoStyles]}>
+                          {this.props.noView
+                              ? this.props.noView
+                              : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "No!"}</Text>
+                          }
+                      </Animated.View>
                       )
-                      : null
+                    : null
+                  )
+              }
+
+              { this.props.renderYes
+                ? this.props.renderYes(pan)
+                : (
+                    this.props.showYes
+                    ? (
+                      <Animated.View style={[yesStyle, yesPositionStyle, animatedYesStyles]}>
+                          {this.props.yesView
+                              ? this.props.yesView
+                              : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "Yes!"}</Text>
+                          }
+                      </Animated.View>
                     )
-                }
+                    : null
+                  )
+              }
+              {
+
+              }
 
             </View>
     );

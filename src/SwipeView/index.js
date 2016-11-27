@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   View,
@@ -14,7 +13,8 @@ import { userConfidence } from '../util/userConfidence';
 
 import Card from './components/Card';
 import NoMoreCards from './components/NoMoreCards';
-import { Cards, Cards2 } from './data';
+import Confidence from './components/Confidence';
+
 import { statements as data } from '../../data/test_statements';
 
 const CARD_REFRESH_LIMIT = 3;
@@ -29,6 +29,7 @@ export default class SwipeView extends Component {
       touchesCardNr: 0,
       swipes: [],
       time: new Date().getTime(),
+      confidence: 0.5,
     }
   }
 
@@ -41,7 +42,7 @@ export default class SwipeView extends Component {
     });
   };
 
-  _handleSwipeSuccess = (card, box) => {
+  _handleSwipeSuccess = (card, box, lastSwipe) => {
     const {
       swipes,
       touchesScreenNr,
@@ -49,16 +50,16 @@ export default class SwipeView extends Component {
       time
     } = this.state;
 
-    console.log('box', box.text);
-
-    userConfidence({
+    const confidence = userConfidence({
       touchesScreenNr,
       touchesCardNr,
       swipesNr: swipes.length,
       time: new Date().getTime() - time,
-      lastSwipe: _.last(swipes),
+      lastSwipe,
       box,
     });
+
+    console.log('confidence', confidence);
 
     // reset touches and swipes
     this.setState({
@@ -66,6 +67,7 @@ export default class SwipeView extends Component {
       touchesCardNr: 0,
       swipes: [],
       time: new Date().getTime(),
+      confidence,
     });
   };
 
@@ -111,6 +113,9 @@ export default class SwipeView extends Component {
       <SwipeCards
         cards={this.state.cards}
         loop={false}
+
+        confidence={this.state.confidence}
+        renderConfidence={() => <Confidence style={{ backgroundColor: 'blue'}} />}
 
         onTouch={this._handleTouch}
 
