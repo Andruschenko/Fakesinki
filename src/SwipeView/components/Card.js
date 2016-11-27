@@ -21,7 +21,7 @@ const Card = (props) => {
         {props.statement}
       </Text>
       <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={{fontSize: 16}}>
+        <Text style={{fontSize: 18}}>
           by {props.source}
         </Text>
         <Image
@@ -50,13 +50,13 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 2,
-    fontSize: 20,
+    fontSize: 24,
     marginTop: 10,
   },
   thumbnail: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
+    height: 80,
+    width: 80,
+    borderRadius: 40,
     marginLeft: 10,
   }
 });

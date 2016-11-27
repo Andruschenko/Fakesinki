@@ -191,7 +191,7 @@ class SwipeCards extends Component {
       .then(() => this.state.pan.setValue({x: 0, y: 0}))
       .then(() => this.state.enter.setValue(0))
       .then(() => this._showConfidence())
-      .then(() => new Promise((resolve) => setTimeout(() => { this._removeConfidence(); resolve(); }, 2000)))
+      .then(() => new Promise((resolve) => setTimeout(() => { this._removeConfidence(); resolve(); }, 4000)))
       .then(() => this._goToNextCard())
       .then(() => this._animateEntrance())
       .catch(error => alert(error));
@@ -278,7 +278,7 @@ class SwipeCards extends Component {
                       <Animated.View style={[noStyle, noPositionStyle, animatedNoStyles]}>
                           {this.props.noView
                               ? this.props.noView
-                              : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "True!"}</Text>
+                              : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "False!"}</Text>
                           }
                       </Animated.View>
                       )
@@ -294,7 +294,7 @@ class SwipeCards extends Component {
                       <Animated.View style={[yesStyle, yesPositionStyle, animatedYesStyles]}>
                           {this.props.yesView
                               ? this.props.yesView
-                              : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "False!"}</Text>
+                              : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "True!"}</Text>
                           }
                       </Animated.View>
                     )
@@ -311,6 +311,7 @@ class SwipeCards extends Component {
                 opacity={this.state.confidenceEnter}
                 confidence={this.props.confidence}
                 box={this.props.box}
+                card={this.state.card}
               />
 
             </View>
