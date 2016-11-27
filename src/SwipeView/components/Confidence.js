@@ -22,10 +22,10 @@ const Confidence = (props) => {
   _inferConfidenceLevel = () => {
     const { confidence: test } = props;
     if (test<0.2) return "absolutely confident";
-    else if (test<0.3) return "confident";
+    else if (test<0.3) return "pretty confident";
     else if (test<=0.5) return "unsure";
     else if (test<0.7) return "unsure";
-    else if (test<0.8) return "confident";
+    else if (test<0.8) return "pretty confident";
     else return "absolutely confident";
   };
 
@@ -41,25 +41,22 @@ const Confidence = (props) => {
       style={[styles.container, props.style, { opacity: props.opacity, backgroundColor: _getColor() }]}
     >
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'space-around', padding: 20}}>
+        <Text style={{fontSize: 22 }}>
+          <Text>We analyzed that you are</Text>
+          <Text style={{fontWeight: 'bold'}}> {_inferConfidenceLevel()}</Text>
+          <Text> in your judgment.</Text>
+        </Text>
         <Text style={styles.text}>
           {_isRight() ? "Yeah! You're right!" : "Sorry, you're wrong!"}
         </Text>
-        <Text style={{fontSize: 18}}>
-          We analyzed that you are {_inferConfidenceLevel()} in your judgment.
-
-
-        </Text>
-        <View>
-          <Text style={{fontSize: 20, color: 'white'}}>
-            Confidence Score: {props.confidence.toFixed(2)}
-          </Text>
-        </View>
-        <Text style={{ fontSize: 14, color: '#54524D'}}>
-          {props.card.statement}
-        </Text>
-        <Text style={{fontSize: 16, color: 'white'}}>
+        <Text style={{fontSize: 20 }}>
           {!_isRight() ? props.card.ruling_text : ''}
         </Text>
+        <View>
+          <Text style={{fontSize: 16, color: '#5B5952'}}>
+            Confidence Score: {(Math.abs(0.5 - props.confidence)*200).toFixed(2)}%
+          </Text>
+        </View>
       </View>
 
     </Animated.View>

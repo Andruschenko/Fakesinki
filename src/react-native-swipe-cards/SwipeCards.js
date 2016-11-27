@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
       borderRadius: 5,
   },
   yesPosition: {
-      bottom: 20,
+      top: 20,
       right: 20,
   },
   yesText: {
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
       borderRadius: 5,
   },
   noPosition: {
-    bottom: 20,
+    top: 20,
     left: 20,
   },
   noText: {
