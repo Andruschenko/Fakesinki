@@ -10,12 +10,17 @@ import {
   Animated,
   PanResponder,
   Image,
+  Dimensions,
 } from 'react-native';
 
 import clamp from 'clamp';
 
 import NoMoreCards from './NoMoreCards.js';
 import { getTargetBox2 } from './boxes';
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
+
+import Confidence from '../SwipeView/components/Confidence';
 
 // Base Styles. Use props to override these values
 const styles = StyleSheet.create({
@@ -65,6 +70,9 @@ class SwipeCards extends Component {
       pan: new Animated.ValueXY(),
       enter: new Animated.Value(0.5),
       card: this.props.cards ? this.props.cards[0] : null,
+      confidenceEnter: new Animated.Value(0),
+      confidenceWidth: 0,
+      confidenceHeight: 0,
     }
   }
 
@@ -92,6 +100,13 @@ class SwipeCards extends Component {
     Animated.spring(
       this.state.enter,
       { toValue: 1, friction: 8 }
+    ).start();
+  }
+
+  _animateConfidenceIn = () => {
+    Animated.timing(
+      this.state.confidenceEnter,
+      { toValue: 1 }
     ).start();
   }
 
@@ -168,15 +183,35 @@ class SwipeCards extends Component {
   }
 
   _resetState() {
-    this.state.pan.setValue({x: 0, y: 0});
-    this.state.enter.setValue(0);
+
     //
     // show confidence card
     console.log('your confidence: ', this.props.confidence);
-    // set timeout to 2 sec
-    this._goToNextCard();
-    this._animateEntrance();
+    Promise.resolve()
+      .then(() => this.state.pan.setValue({x: 0, y: 0}))
+      .then(() => this.state.enter.setValue(0))
+      .then(() => this._showConfidence())
+      .then(() => new Promise((resolve) => setTimeout(() => { this._removeConfidence(); resolve(); }, 2000)))
+      .then(() => this._goToNextCard())
+      .then(() => this._animateEntrance())
+      .catch(error => alert(error));
+
   }
+
+  _showConfidence = () => {
+    this._animateConfidenceIn();
+    this.setState({
+      confidenceWidth: 300,
+      confidenceHeight: 400,
+    })
+  };
+
+  _removeConfidence = () => {
+    this.setState({
+      confidenceWidth: 0,
+      confidenceHeight: 0,
+    })
+  };
 
   renderNoMoreCards() {
     if (this.props.renderNoMoreCards)
@@ -243,7 +278,7 @@ class SwipeCards extends Component {
                       <Animated.View style={[noStyle, noPositionStyle, animatedNoStyles]}>
                           {this.props.noView
                               ? this.props.noView
-                              : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "No!"}</Text>
+                              : <Text style={this.props.noTextStyle}>{this.props.noText ? this.props.noText : "True!"}</Text>
                           }
                       </Animated.View>
                       )
@@ -259,16 +294,24 @@ class SwipeCards extends Component {
                       <Animated.View style={[yesStyle, yesPositionStyle, animatedYesStyles]}>
                           {this.props.yesView
                               ? this.props.yesView
-                              : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "Yes!"}</Text>
+                              : <Text style={this.props.yesTextStyle}>{this.props.yesText? this.props.yesText : "False!"}</Text>
                           }
                       </Animated.View>
                     )
                     : null
                   )
               }
-              {
-
-              }
+              <Confidence
+                style={{
+                  width: this.state.confidenceWidth,
+                  height: this.state.confidenceHeight,
+                  left: (screenWidth / 2) - 150,
+                  top: (screenHeight / 2) - 200,
+                }}
+                opacity={this.state.confidenceEnter}
+                confidence={this.props.confidence}
+                box={this.props.box}
+              />
 
             </View>
     );

@@ -30,12 +30,13 @@ export default class SwipeView extends Component {
       swipes: [],
       time: new Date().getTime(),
       confidence: 0.5,
+      box: {},
     }
   }
 
   _handleSwipe = ({ vx, vy, dx, dy }) => {
-    console.log('vx', vx, 'vy', vy);
-    console.log('dx', dx, 'dy', dy);
+    // console.log('vx', vx, 'vy', vy);
+    // console.log('dx', dx, 'dy', dy);
 
     this.setState({
       swipes: this.state.swipes.concat([{ vx, vy, dx, dy }])
@@ -59,7 +60,7 @@ export default class SwipeView extends Component {
       box,
     });
 
-    console.log('confidence', confidence);
+    // console.log('confidence', confidence);
 
     // reset touches and swipes
     this.setState({
@@ -68,6 +69,7 @@ export default class SwipeView extends Component {
       swipes: [],
       time: new Date().getTime(),
       confidence,
+      box,
     });
   };
 
@@ -115,7 +117,7 @@ export default class SwipeView extends Component {
         loop={false}
 
         confidence={this.state.confidence}
-        renderConfidence={() => <Confidence style={{ backgroundColor: 'blue'}} />}
+        renderConfidence={(w, h) => <Confidence style={{ backgroundColor: 'blue', width: w, height: h}} />}
 
         onTouch={this._handleTouch}
 
@@ -127,6 +129,7 @@ export default class SwipeView extends Component {
         onSwipeSuccess={this._handleSwipeSuccess}
         onSwipe={this._handleSwipe}
         cardRemoved={this._cardRemoved}
+        box={this.state.box}
       />
     )
   }

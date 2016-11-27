@@ -2,6 +2,7 @@ import React  from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
 } from 'react-native';
 
@@ -13,34 +14,51 @@ const Card = (props) => {
 
   return (
     <View
-      style={styles.card}
+      style={[styles.card, props.style]}
       onTouchStart={_handleTouch}
     >
-      {/*<Image style={styles.thumbnail} source={{uri: this.props.image}} />*/}
       <Text style={styles.text}>
-        Card ruling_text: {props.ruling_text}
+        {props.statement}
       </Text>
+      <View style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+        <Text style={{fontSize: 16}}>
+          by {props.source}
+        </Text>
+        <Image
+          style={styles.thumbnail}
+          source={{uri: props.source_image}}
+        />
+      </View>
+
     </View>
   )
 };
 
 const styles = StyleSheet.create({
   card: {
-    alignItems: 'center',
+    alignItems: 'stretch',
+    justifyContent: 'space-around',
     borderRadius: 5,
     overflow: 'hidden',
     borderColor: 'grey',
-    backgroundColor: 'white',
+    backgroundColor: '#f9f5f5',
     borderWidth: 1,
     elevation: 1,
-    height: 150,
-    width: 200,
+    height: 400,
+    width: 300,
+    padding: 20,
   },
   text: {
+    flex: 2,
     fontSize: 20,
-    paddingTop: 10,
-    paddingBottom: 10
+    marginTop: 10,
   },
+  thumbnail: {
+    height: 60,
+    width: 60,
+    borderRadius: 30,
+    marginLeft: 10,
+  }
 });
 
 export default Card;

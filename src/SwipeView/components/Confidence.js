@@ -3,34 +3,36 @@ import {
   View,
   Text,
   StyleSheet,
+  Animated,
+  Image,
 } from 'react-native';
 
 const Confidence = (props) => {
 
-  // _handleTouch = (event) => (
-  //   props.onTouch(event, 'card')
-  // );
+
+  _inferConfidence = () => {
+    return true;
+  };
 
   return (
-    <View
-      style={styles.container}
+    <Animated.View
+      style={[styles.container, props.style, { opacity: props.opacity }]}
     >
       <Text style={styles.text}>
-        You are confident
+        Confidence level: {props.confidence}
+        Chosen box:
       </Text>
-    </View>
+    </Animated.View>
   )
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    overflow: 'hidden',
-    backgroundColor: 'blue',
-    // elevation: 1,
-    height: 300,
-    width: 250,
+    position: 'absolute',
+    backgroundColor: '#f4c8fa',
+    height: 0,
+    width: 0,
+    borderRadius: 10,
   },
   text: {
     fontSize: 20,
