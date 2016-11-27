@@ -17,10 +17,10 @@ AA = movement angle abs(atan(y/x)) (degrees) (0..90); x=0 -> AA:=90; y=0 -> AA:=
 3. Calculate user confidence level
 -> src/prototype.userConfidence.py
 	userConfidence(NT,NS,TA,CS,TT,SE)
-	[0;0.1) - TOTALLY FALSE
-	[0.1;0.3) - FALSE
+	[0;0.2) - TOTALLY FALSE
+	[0.2;0.3) - FALSE
 	[0.3;0.5) - MOSTLY FALSE
 	0.5 			- WTF
 	(0.5;0.7) - HALF TRUE
-	[0.7;0.9) - MOSTLY TRUE
-	[0.9;1] - TRUE
+	[0.7;0.8) - MOSTLY TRUE
+	[0.8;1] - TRUE
