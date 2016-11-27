@@ -95,13 +95,14 @@ class SwipeCards extends Component {
     ).start();
   }
 
-  componentWillReceiveProps(nextProps){
-    if(nextProps.cards && nextProps.cards.length > 0){
-      this.setState({
-        card: nextProps.cards[0]
-      })
-    }
-  }
+  // componentWillReceiveProps(nextProps){
+  //   if(nextProps.cards && nextProps.cards.length > 0){
+  //     console.log('in componentWillReceiveProps');
+  //     // this.setState({
+  //     //   card: nextProps.cards[0]
+  //     // })
+  //   }
+  // }
 
   _setUpPanResponder = () => {
     this._panResponder = PanResponder.create({
